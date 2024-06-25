@@ -1,0 +1,9 @@
+# Ignore the entire node_modules directory
+**/node_modules/
+
+# Additionally consider ignoring other common files
+.git
+npm-debug.log
+.env*  # Any environment files prefixed with .env
+
+# You can add more patterns here to ignore other development artifacts

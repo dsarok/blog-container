@@ -1,0 +1,6 @@
+FROM node:current-alpine3.19
+WORKDIR /app
+COPY . .
+RUN npm install
+RUN npm install -g nodemon
+CMD ["nodemon","app.js"]
