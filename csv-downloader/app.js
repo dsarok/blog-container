@@ -24,7 +24,7 @@ app.get("/about", function (req, res) {
 });
 
 app.listen(3000);
-console.log("Server is listening on port 8080");
+console.log("Server is listening on port 300");
 
 const connection = mysql.createConnection({
   host: "mysql",
@@ -33,12 +33,20 @@ const connection = mysql.createConnection({
   port: 3306,
   database: "my_database",
 });
-// connection.connect();
+connection.connect();
 
-connection.query("SELECT 1 + 1 AS solution", (err, rows, fields) => {
-  if (err) throw err;
+connection.query(
+  `CREATE TABLE IF NOT EXISTS articles 
+(
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  heading TEXT NOT NULL,
+  content TEXT NOT NULL
+)`,
+  (err, rows, fields) => {
+    if (err) throw err;
 
-  console.log("The solution is: ", rows[0].solution);
-});
+    console.log("The solution is: ", rows);
+  }
+);
 
-// connection.end();
+connection.end();

@@ -5,9 +5,10 @@ services:
       context: .
       dockerfile: dockerfile
     volumes:
-      - /project/sandbox/csv-downloader:/app
+      - /project/workspace/csv-downloader:/app
+      - /app/node_modules
     ports:
-      - 3000:3000
+      - "3000:3000"
   mysql:
     image: mysql:latest
     container_name: mysql_container
@@ -18,8 +19,3 @@ services:
       MYSQL_PASSWORD: my_user_password
     ports:
       - "3306:3306"
-    volumes:
-      - my-mysql-data:/var/lib/mysql
-
-volumes:
-  my-mysql-data:
