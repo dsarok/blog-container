@@ -1,12 +1,55 @@
 var express = require("express");
 var app = express();
 const mysql = require("mysql2");
-// set the view engine to ejs
+var bodyParser = require("body-parser");
+
+// app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
+
+let connection;
+(() => {
+  connection = mysql.createConnection({
+    host: "mysql",
+    user: "root",
+    password: "root_password",
+    port: 3306,
+    database: "my_database",
+  });
+  connection.connect();
+
+  connection.query(
+    `CREATE TABLE IF NOT EXISTS articles
+  (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    heading TEXT NOT NULL,
+    content TEXT NOT NULL
+  )`,
+    (err, rows, fields) => {
+      if (err) throw err;
+
+      console.log("the table articles is presen in db");
+    }
+  );
+})();
+
+function addData(heading, body) {
+  connection.query(
+    "INSERT INTO articles (heading, body) VALUES (?, ?)",
+    [heading, body],
+    (err, results, fields) => {
+      if (err) {
+        console.error("Error executing query:", err);
+        return;
+      }
+      console.log("Inserted row:", results);
+    }
+  );
+  return true;
+}
 app.set("view engine", "ejs");
 
-// use res.render to load up an ejs view file
-
-// index page
 app.get("/", function (req, res) {
   var tagline =
     "No programming concept is complete without a cute animal mascot.";
@@ -14,6 +57,15 @@ app.get("/", function (req, res) {
   res.render("pages/index", {
     tagline: tagline,
   });
+});
+app.post("/", function (req, res) {
+  console.log("posting data", req.body.heading, req.body.body);
+  try {
+    addData(req.body.heading, req.body.body);
+    res.sendStatus(200);
+  } catch (e) {
+    res.sendStatus(500);
+  }
 });
 app.get("/create", function (req, res) {
   res.render("pages/create");
@@ -24,29 +76,6 @@ app.get("/about", function (req, res) {
 });
 
 app.listen(3000);
-console.log("Server is listening on port 300");
+console.log(new Date() + "restart10 3000");
 
-const connection = mysql.createConnection({
-  host: "mysql",
-  user: "root",
-  password: "root_password",
-  port: 3306,
-  database: "my_database",
-});
-connection.connect();
-
-connection.query(
-  `CREATE TABLE IF NOT EXISTS articles 
-(
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  heading TEXT NOT NULL,
-  content TEXT NOT NULL
-)`,
-  (err, rows, fields) => {
-    if (err) throw err;
-
-    console.log("The solution is: ", rows);
-  }
-);
-
-connection.end();
+// connection.end();
