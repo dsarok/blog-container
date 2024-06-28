@@ -9,6 +9,8 @@ services:
       - /app/node_modules
     ports:
       - "3000:3000"
+    depends_on:
+      - mysql
   mysql:
     image: mysql:latest
     container_name: mysql_container
@@ -17,5 +19,9 @@ services:
       MYSQL_DATABASE: my_database
       MYSQL_USER: my_user
       MYSQL_PASSWORD: my_user_password
+    volumes:
+      - data:/app/var/lib/mysql
     ports:
       - "3306:3306"
+volumes:
+  data:

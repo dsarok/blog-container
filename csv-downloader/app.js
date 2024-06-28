@@ -3,50 +3,78 @@ var app = express();
 const mysql = require("mysql2");
 var bodyParser = require("body-parser");
 
-// app.use(bodyParser.urlencoded({ extended: false }));
-
-// parse application/json
 app.use(bodyParser.json());
 
 let connection;
-(() => {
-  connection = mysql.createConnection({
-    host: "mysql",
-    user: "root",
-    password: "root_password",
-    port: 3306,
-    database: "my_database",
-  });
-  connection.connect();
+async function connect() {
+  try {
+    console.log("1st step");
+    connection = mysql.createConnection({
+      host: "mysql",
+      user: "root",
+      password: "root_password",
+      port: 3306,
+      database: "my_database",
+    });
+    connection.connect((err) => {
+      if (err) {
+        console.log("promlem in connecting");
+        setTimeout(() => {
+          console.log("reconnecting...");
+          connect();
+        }, 2000);
+      }
+      console.log("connected as id " + connection.threadId);
 
-  connection.query(
-    `CREATE TABLE IF NOT EXISTS articles
-  (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    heading TEXT NOT NULL,
-    content TEXT NOT NULL
-  )`,
-    (err, rows, fields) => {
-      if (err) throw err;
+      // Execute the CREATE TABLE query
+      connection.execute(
+        "CREATE TABLE IF NOT EXISTS articles (id INT AUTO_INCREMENT PRIMARY KEY, heading TEXT NOT NULL, content TEXT NOT NULL)",
+        (err, results, fields) => {
+          if (err) {
+            console.log("promlem in executing creating table article..");
+            setTimeout(() => {
+              console.log("re-executing...");
+            }, 2000);
+          } else {
+            console.log("Table created or already exists.");
+            console.log("Results: ", results);
+            console.log("Fields: ", fields);
+          }
+        }
+      );
+    });
 
-      console.log("the table articles is presen in db");
-    }
-  );
-})();
-
+    console.log("2nd step");
+  } catch (e) {
+    console.error("this is the error", e);
+    throw "error of this";
+  }
+}
+let x = 0;
+async function createConnection() {
+  try {
+    await connect();
+  } catch (e) {
+    console.log(e, "reconnecting to the mysql database " + x);
+    x++;
+    setTimeout(createConnection, 5000);
+  }
+}
+createConnection();
 function addData(heading, body) {
-  connection.query(
-    "INSERT INTO articles (heading, body) VALUES (?, ?)",
-    [heading, body],
-    (err, results, fields) => {
+  connection.connect((e) => {
+    if (e) throw e;
+    const query = `INSERT INTO articles (heading, content) VALUES (?, ?)`;
+
+    connection.execute(query, [heading, body], (err, results, fields) => {
       if (err) {
         console.error("Error executing query:", err);
         return;
       }
-      console.log("Inserted row:", results);
-    }
-  );
-  return true;
+      console.log("Successfully inserted:", results);
+    });
+    connection.end();
+  });
 }
 app.set("view engine", "ejs");
 
@@ -76,6 +104,6 @@ app.get("/about", function (req, res) {
 });
 
 app.listen(3000);
-console.log(new Date() + "restart10 3000");
+console.log(new Date() + "restart11 3000");
 
 // connection.end();
