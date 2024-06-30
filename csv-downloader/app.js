@@ -22,7 +22,7 @@ async function connect() {
         setTimeout(() => {
           console.log("reconnecting...");
           connect();
-        }, 2000);
+        }, 5000);
       }
       console.log("connected as id " + connection.threadId);
 
@@ -50,12 +50,12 @@ async function connect() {
     throw "error of this";
   }
 }
-let x = 0;
+
 async function createConnection() {
   try {
     await connect();
   } catch (e) {
-    console.log(e, "reconnecting to the mysql database " + x);
+    console.log(e, "reconnecting to the mysql database ..." );
     x++;
     setTimeout(createConnection, 5000);
   }
@@ -73,7 +73,7 @@ function addData(heading, body) {
       }
       console.log("Successfully inserted:", results);
     });
-    connection.end();
+    // connection.end();
   });
 }
 app.set("view engine", "ejs");
@@ -103,7 +103,10 @@ app.get("/about", function (req, res) {
   res.render("pages/about");
 });
 
+app.get('/blogs',function (req,res) {
+  res.render('pages/blogs')
+})
 app.listen(3000);
-console.log(new Date() + "restart11 3000");
+console.log(new Date() + "restart 14 3000");
 
 // connection.end();
