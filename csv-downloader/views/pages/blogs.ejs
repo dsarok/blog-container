@@ -20,19 +20,19 @@
                     <%= item.heading %>
                 </h2>
                 <div class="subheading" id="sub-<%=id%>">
-                    <div>
+                    <div content="<%=item.content%>">
                     <%=item.content.substr(0,100)%>
                         <% if(item.content.length> 100 ) { %>
                             ...
                             <% } %>
                     </div>    
                     <div>
-                        <button>open</button>
+                        <button onclick="handleclick(<%=id%>)">open</button>
                     </div>
                 </div>
                 <div style="font-size: 0.7rem;font-style: italic;font-weight: 300;">2021-04-02</div>
             </li>
-            <% }); %>
+        <% }); %>
     </ul>
 <% if(data[0].length===0){%>
     <div style="height: 100vh;width:100vw;display:flex;justify-content:center;align-items:center">
@@ -40,4 +40,21 @@
     </div>
 <%}%>
 </body>
+<script>
+    function handleclick(id){
+        const parent = document.getElementById(`sub-${id}`).getElementsByTagName('div');
+        const selectDiv = parent[0]
+        const content = ('this is the data',selectDiv.getAttribute('content'))
+        if(selectDiv.innerText.length>105){
+            selectDiv.innerText=content.slice(0,100)+"..."
+            parent[1].getElementsByTagName('button')[0].innerText = 'open'
+            console.log('changed a',selectDiv.innerText)
+        }
+        else{
+            selectDiv.innerText=content;
+             parent[1].getElementsByTagName('button')[0].innerText = 'close'
+            console.log('changed b',selectDiv.innerText)
+        }
+    }
+</script>
 </html>
