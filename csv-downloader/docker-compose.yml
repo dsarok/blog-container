@@ -10,8 +10,6 @@ services:
       MYSQL_PASSWORD: my_user_password
     volumes:
       - data:/app/var/lib/mysql
-    ports:
-      - "3306:3306"
   utility:
     build:
       context: .
