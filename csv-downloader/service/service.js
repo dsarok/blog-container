@@ -18,10 +18,7 @@ class database {
   async createConnection() {
     try {
       await this.runQuery(
-        "CREATE TABLE IF NOT EXISTS articles (id INT AUTO_INCREMENT PRIMARY KEY, heading TEXT NOT NULL, content TEXT NOT NULL)",
-        (e)=>{
-          throw e;
-        }
+        "CREATE TABLE IF NOT EXISTS articles (id INT AUTO_INCREMENT PRIMARY KEY, heading TEXT NOT NULL, content TEXT NOT NULL)"
       )
       console.log('successfully created database')
     } catch (e) {
