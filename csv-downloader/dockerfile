@@ -1,5 +1,5 @@
 # Use the latest long-term support version of Node.js
-FROM node:lts-slim
+FROM mcr.microsoft.com/vscode/devcontainers/javascript-node
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -20,7 +20,7 @@ COPY . .
 EXPOSE 3000
 
 # Set environment variable
-ENV NODE_ENV production
+ENV NODE_ENV development
 
 # Use nodemon to start the app
 CMD ["nodemon", "app.js"]

@@ -6,7 +6,7 @@
   <body class="container">
     <header><%- include('../partials/header'); %></header>
     <main>
-      <div class="jumbotron" style="width: 100%">
+      <div class="jumbotron" style="width: 100%;height:100%">
         <div class="container">
           <input
             placeholder="Heading"
@@ -14,7 +14,7 @@
           />
           <textarea
             id="validationCustom03"
-            style="height: 10cm; width: 100%"
+            style="height: 60vh; width: 100%"
             required
           >
           </textarea>
@@ -48,7 +48,10 @@
         },
       })
         .then((res) => {
-          console.log(res.body);
+         if(res.status == 200)
+         alert('stored successfully')
+        else
+          alert('something went wrong')
         })
         .catch((e) => {
           console.error(e);

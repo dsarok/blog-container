@@ -1,16 +1,5 @@
 version: "3.8"
 services:
-  utility:
-    build:
-      context: .
-      dockerfile: dockerfile
-    volumes:
-      - /project/workspace/csv-downloader:/app
-      - /app/node_modules
-    ports:
-      - "3000:3000"
-    depends_on:
-      - mysql
   mysql:
     image: mysql:latest
     container_name: mysql_container
@@ -21,7 +10,16 @@ services:
       MYSQL_PASSWORD: my_user_password
     volumes:
       - data:/app/var/lib/mysql
+  utility:
+    build:
+      context: .
+      dockerfile: dockerfile
+    volumes:
+      - /workspaces/blog-container/csv-downloader:/app
+      - /app/node_modules
     ports:
-      - "3306:3306"
+      - "3000:3000"
+    depends_on:
+      - mysql
 volumes:
   data:
