@@ -1,37 +1,36 @@
-const mysql = require('mysql2')
-const knexsql = require('./knexsql').default
 class database {
 
   constructor() {
-    this.pool = mysql.createPool({
-      host: "mysql",
-      user: "root",
-      password: "root_password",
-      port: 3306,
-      database: "my_database",
-      waitForConnections: true,
-      connectionLimit: 4
+  this.knex = require('knex')({
+      client: 'mysql2',
+      connection: {
+        host: 'mysql',
+        port: 3306,
+        user: 'root',
+        password: 'root_password',
+        database: 'my_database',
+      },
     });
-    this.pool = this.pool.promise();
-    this.knex1 = new knexsql();
+   
   }
-
+  async addData(heading,content){
+    await this.knex('articles').insert({heading:heading,content:content})
+  }
   async createConnection() {
     try {
-      await this.knex1.knex.schema.hasTable('articles', (exits) => {
-        if (!exits) {
-          this.knex1.knex.schema.createTable((table) => {
+      await this.knex.schema.hasTable('articles').then(exists => {
+        if (!exists) {
+         return this.knex.schema.createTable('articles',(table) => {
             table.increments('id').primary()
             table.text('heading').notNullable()
             table.text('content').notNullable()
+          }).then(res=>{
+            console.log('table articles created successfully')
           })
         }
         else {
           console.log('table already exists!!')
         }
-      })
-      await this.knex1.knex.schema.hasTable('articles').then(res => {
-        console.log('successfully connected by knex')
       })
     } catch (e) {
       console.log("reconnecting to the mysql database ...", e);
@@ -56,10 +55,10 @@ class database {
       })
   }
   getAllData() {
-    return this.knex1.knex.select('id', 'heading', 'content').from('articles');
+    return this.knex.select('id', 'heading', 'content').from('articles');
   }
   async streamData(id, response) {
-    const query =  this.knex1.knex.select('*').from('articles');
+    const query =  this.knex.select('*').from('articles');
     const headers = {
       'Content-Type': 'text/csv',
       'Content-Disposition': 'attachment; filename="data.csv"'
@@ -69,8 +68,10 @@ class database {
     query.stream()
     .on('data', row => {
       // Process each row from the database query
-      const csvRow = `${row.id},${row.heading},${row.content}\n`; // Adjust fields based on your schema
-      response.write(csvRow);
+      setTimeout(()=>{
+        const csvRow = `${row.id},${row.heading},${row.content}\n`; // Adjust fields based on your schema
+        response.write(csvRow);
+      },1000)
     })
     .on('end', () => {
       console.log('CSV data streamed successfully');
@@ -81,7 +82,7 @@ class database {
       response.statusCode = 500;
       response.end('Internal Server Error');
     });
-    response.status(400)
+    response.status(400);
   }
 
 }

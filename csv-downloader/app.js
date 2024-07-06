@@ -1,19 +1,12 @@
 var express = require("express");
 
 var app = express();
-const fs = require('fs')
 var bodyParser = require("body-parser");
 app.use(bodyParser.json());
-
+app.use(express.static('public'))
 const db = require('./service/service').database
 const obj1 = new db()
 obj1.createConnection();
-
-async function addData(heading, body) {
-  const query = `INSERT INTO articles (heading, content) VALUES (?, ?)`;
-  await obj1.pool.query(query, [heading, body]);
-}
-
 
 app.set("view engine", "ejs");
 
@@ -24,7 +17,7 @@ app.get("/", function (req, res) {
 // insert data
 app.post("/", async function (req, res) {
   try {
-    await addData(req.body.heading, req.body.body);
+    await obj1.addData(req.body.heading, req.body.body);
     res.sendStatus(200);
   } catch (e) {
     res.sendStatus(500);
