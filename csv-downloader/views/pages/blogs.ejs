@@ -14,7 +14,7 @@
 <body class="container">
     <header><%- include('../partials/header'); %></header>
     <ul class="list-group">
-        <% data[0].forEach((item,id)=>{ %>
+        <% data.forEach((item,id)=>{ %>
             <li class="list-group-item">
                 <h2>
                     <%= item.heading %>
@@ -36,7 +36,7 @@
             </li>
             <% }); %>
     </ul>
-    <% if(data[0].length===0){%>
+    <% if(data.length===0){%>
         <div style="height: 100vh;width:100vw;display:flex;justify-content:center;align-items:center">
             Empty
         </div>
@@ -46,7 +46,7 @@
     function handleclick(id) {
         const parent = document.getElementById(`sub-${id}`).getElementsByTagName('div');
         const selectDiv = parent[0]
-        const content = ('this is the data', selectDiv.getAttribute('content'))
+        const content = selectDiv.getAttribute('content')
         if (selectDiv.innerText.length > 105) {
             selectDiv.innerText = content.slice(0, 100) + "..."
             parent[1].getElementsByTagName('button')[0].innerText = 'open'

@@ -1,4 +1,5 @@
 var express = require("express");
+
 var app = express();
 const fs = require('fs')
 var bodyParser = require("body-parser");
@@ -43,35 +44,12 @@ app.get("/about", function (req, res) {
 });
 
 app.get('/blogs', async function (req, res) {
-  const query = "Select id, heading, content from articles";
-  const data = await obj1.pool.query(query);
+  const data = await obj1.getAllData();
   res.render('pages/blogs', { data: data });
 })
 
-app.get('/download/:id',async (req,res)=>{
-    const query = "Select * from articles where id = ?"
-    const id = req.params.id;
-    console.log('id is :',req.params.id)
-    res.setHeader('Content-Disposition', 'attachment; filename="largefile.csv"');
-    res.setHeader('Content-Type', 'text/plain');
-
-    const data = await obj1.pool.query(query,[id])
-    const titleKeys = Object.keys(data[0][0]);
-    const refinedData = [];
-    refinedData.push(titleKeys);
-    refinedData.push(Object.values(data[0][0]));
-
-    let csvContent="";
-    refinedData.forEach(row => {
-      csvContent += row.join(',') + '\n'
-    })
-    console.log(csvContent,'this is csv')
-    fs.writeFileSync('largefile.csv',csvContent,(err)=>{
-      console.log(err,'err is writing csv file')
-    })
-
-  const readStream = fs.createReadStream('./largefile.csv');
-  readStream.pipe(res);
+app.get('/download/:id', (req,res)=>{
+ obj1.streamData(req.params.id,res)
 })
 
 app.listen(3000);
