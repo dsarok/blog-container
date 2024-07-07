@@ -36,9 +36,8 @@ app.get("/about", function (req, res) {
   res.render("pages/about");
 });
 
-app.get('/blogs', async function (req, res) {
-  const data = await obj1.getAllData();
-  res.render('pages/blogs', { data: data });
+app.get('/blogs', function (req, res) {
+    obj1.getAllData(res); 
 })
 
 app.get('/download/:id', (req,res)=>{
