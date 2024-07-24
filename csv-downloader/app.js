@@ -52,11 +52,10 @@ app.get('/download/:id', (req,res)=>{
  obj1.streamData(req.params.id,res)
 })
 
-app.get('/metrix',async (req,res)=>{
+app.get('/metrics',async (req,res)=>{
   res.setHeader('Content-Type', register.contentType)
   const value = await register.metrics();
-  console.log('metrix is this',value)
-  res.end(register.metrics().value)
+  res.send(value)
 })
 app.listen(3000);
 console.log(new Date() + "restart 14 3000");

@@ -22,5 +22,14 @@ services:
       - "9229:9229"
     depends_on:
       - mysql
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - /workspaces/blog-container/csv-downloader/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - utility
+
 volumes:
   data:
