@@ -18,7 +18,7 @@ services:
       - /workspaces/blog-container/csv-downloader:/app
       - /app/node_modules
     ports:
-      - "3000:3000"
+      - "8080:8080"
       - "9229:9229"
     depends_on:
       - mysql
@@ -30,6 +30,12 @@ services:
       - "9090:9090"
     depends_on:
       - utility
+  grafana:
+    image: grafana/grafana-enterprise
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
 
 volumes:
   data:
