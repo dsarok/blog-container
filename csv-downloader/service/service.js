@@ -63,7 +63,7 @@ class database {
     }
   }
   async streamData(id, response) {
-    const query = this.knex.select('*').from('articles');
+    const query = this.knex('articles').where('id',id).select('*')
     const headers = {
       'Content-Type': 'text/csv',
       'Content-Disposition': 'attachment; filename="data.csv"'
@@ -79,6 +79,7 @@ class database {
       })
       .on('end', () => {
         console.log('CSV data streamed successfully');
+        
         response.end();
       })
       .on('error', err => {
@@ -87,6 +88,7 @@ class database {
         response.end('Internal Server Error');
       });
     response.status(400);
+    response.end();
   }
 
 }
