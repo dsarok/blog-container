@@ -74,7 +74,7 @@
                 if (event.lengthComputable) {
                     const percentComplete = (event.loaded / event.total) * 100;
                     console.log('this is the project',percentComplete)
-                    progressBar.value = "50";
+                    progressBar.value = percentComplete;
                 }
             };
 
@@ -83,7 +83,7 @@
                     const url = URL.createObjectURL(xhr.response);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'largefile.csv';
+                    a.download = xhr.getResponseHeader('filename')+".txt"
                     a.click();
                     URL.revokeObjectURL(url);
 
