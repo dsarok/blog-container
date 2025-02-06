@@ -63,32 +63,38 @@ class database {
     }
   }
   async streamData(id, response) {
-    const query = this.knex('articles').where('id',id).select('*')
+    try{
+    const query = this.knex('articles').where('id', id).select('*')
     const headers = {
       'Content-Type': 'text/csv',
       'Content-Disposition': 'attachment; filename="data.csv"'
     };
-
     response.writeHead(200, headers);
-    query.stream()
-      .on('data', row => {
-        const rowHead = row.heading.replace(/,/g, ' ');
-        const rowContent = row.content.replace(/,/g, ' ')
-        const csvRow = `${row.id},${rowHead},${rowContent}\n`; // Adjust fields based on your schema
-        response.write(csvRow);
-      })
-      .on('end', () => {
-        console.log('CSV data streamed successfully');
-        
-        response.end();
-      })
-      .on('error', err => {
+    const stream = query.stream();
+    stream
+    .on('data', row => {
+      let csvValue = "";
+      for (const key in row) {
+       csvValue = csvValue + row[key]+","
+      }
+      response.write(csvValue);
+    })
+    stream
+    .on('end', () => {
+      console.log('CSV data streamed successfully');
+      response.end();
+    })
+    stream
+    .on('error', err => {
         console.error('Error streaming CSV:', err);
         response.statusCode = 500;
         response.end('Internal Server Error');
-      });
-    response.status(400);
+    });
+  }catch(e){
+    response.status('catching error',e);
     response.end();
+  }
+    
   }
 
 }

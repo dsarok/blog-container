@@ -48,8 +48,8 @@ app.get('/blogs', function (req, res) {
     obj1.getAllData(res); 
 })
 
-app.get('/download/:id', (req,res)=>{
- obj1.streamData(req.params.id,res)
+app.get('/download/:id', async (req,res)=>{
+ await obj1.streamData(req.params.id,res)
 })
 
 app.get('/metrics',async (req,res)=>{
