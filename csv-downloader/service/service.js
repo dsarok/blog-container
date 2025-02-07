@@ -77,12 +77,11 @@ class database {
       response.writeHead(200, headers);
       const stream = query.stream();
       stream
-        .on('data', row => {
+        .on('data', async row => {
           let csvValue = "";
           for (const key in row) {
             csvValue = csvValue + row[key] + ","
           }
-          response.write(csvValue);
         })
       stream
         .on('end', () => {

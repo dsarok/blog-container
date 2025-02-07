@@ -74,7 +74,7 @@
                 if (event.lengthComputable) {
                     const percentComplete = (event.loaded / event.total) * 100;
                     console.log('this is the project',percentComplete)
-                    progressBar.value = percentComplete;
+                    progressBar.value = 50;
                 }
             };
 
@@ -88,9 +88,7 @@
                     URL.revokeObjectURL(url);
 
                     // Hide progress bar
-                    setTimeout(()=>{
-                        progressBar.style.display = 'none';
-                    },1000)
+                    progressBar.style.display = 'none'
                     
                 }
             };
