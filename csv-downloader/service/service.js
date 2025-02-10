@@ -76,12 +76,26 @@ class database {
       };
       response.writeHead(200, headers);
       const stream = query.stream();
+      let heading="";
       stream
         .on('data', async row => {
-          let csvValue = "";
-          for (const key in row) {
-            csvValue = csvValue + row[key] + ","
+          if (heading == "") {
+            heading = Object.keys(row).join(',');
+            heading= heading + "\n"
+            response.write(heading)
           }
+          let csvValue = "";
+          let firstkey = false;
+         
+          for (const key in row) {
+            csvValue = csvValue + (firstkey) && `,`  + String(row[key]) 
+            firstkey = true;
+          }
+          if (csvValue.length > 0) {
+            csvValue = csvValue.trimEnd()
+          }
+          csvValue = csvValue + "\n";
+          response.write(csvValue);
         })
       stream
         .on('end', () => {
@@ -94,10 +108,12 @@ class database {
           response.statusCode = 500;
           response.end('Internal Server Error');
         });
+        
     } catch (e) {
       response.status('catching error', e);
       response.end();
     }
+    return;
   }
 
 }

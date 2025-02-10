@@ -83,7 +83,7 @@
                     const url = URL.createObjectURL(xhr.response);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = xhr.getResponseHeader('filename')+".txt"
+                    a.download = xhr.getResponseHeader('filename')+".csv"
                     a.click();
                     URL.revokeObjectURL(url);
 
