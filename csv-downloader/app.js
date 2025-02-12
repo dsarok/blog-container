@@ -1,6 +1,6 @@
 var express = require("express");
-const client = require('prom-client')
-const register = new client.Registry()
+// const client = require('prom-client')
+// const register = new client.Registry()
 
 var app = express();
 var bodyParser = require("body-parser");
@@ -10,11 +10,11 @@ const db = require('./service/service').database
 const obj1 = new db()
 obj1.createConnection();
 
-register.setDefaultLabels({
-  app: 'example-nodejs-app'
-})
+// register.setDefaultLabels({
+//   app: 'example-nodejs-app'
+// })
 
-client.collectDefaultMetrics({ register })
+// client.collectDefaultMetrics({ register })
 
 app.set("view engine", "ejs");
 
@@ -48,8 +48,8 @@ app.get('/blogs', function (req, res) {
     obj1.getAllData(res); 
 })
 
-app.get('/download/:id', (req,res)=>{
- obj1.streamData(req.params.id,res)
+app.get('/download/:id', async (req,res)=>{
+ await obj1.streamData(req.params.id,res)
 })
 
 app.get('/metrics',async (req,res)=>{

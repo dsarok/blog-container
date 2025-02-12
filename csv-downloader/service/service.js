@@ -63,30 +63,57 @@ class database {
     }
   }
   async streamData(id, response) {
-    const query = this.knex.select('*').from('articles');
-    const headers = {
-      'Content-Type': 'text/csv',
-      'Content-Disposition': 'attachment; filename="data.csv"'
-    };
+    try {
+      const query = this.knex('articles').where('id', id).select('*')
+      const filename = await this.knex('articles')
+        .where('id', id)
+        .select('heading')
+        .then(val => val[0].heading);
 
-    response.writeHead(200, headers);
-    query.stream()
-      .on('data', row => {
-        const rowHead = row.heading.replace(/,/g, ' ');
-        const rowContent = row.content.replace(/,/g, ' ')
-        const csvRow = `${row.id},${rowHead},${rowContent}\n`; // Adjust fields based on your schema
-        response.write(csvRow);
-      })
-      .on('end', () => {
-        console.log('CSV data streamed successfully');
-        response.end();
-      })
-      .on('error', err => {
-        console.error('Error streaming CSV:', err);
-        response.statusCode = 500;
-        response.end('Internal Server Error');
-      });
-    response.status(400);
+      const headers = {
+        'Content-Type': 'text/csv',
+        'filename': filename
+      };
+      response.writeHead(200, headers);
+      const stream = query.stream();
+      let heading="";
+      stream
+        .on('data', async row => {
+          if (heading == "") {
+            heading = Object.keys(row).join(',');
+            heading= heading + "\n"
+            response.write(heading)
+          }
+          let csvValue = "";
+          let firstkey = false;
+         
+          for (const key in row) {
+            csvValue = csvValue + (firstkey) && `,`  + String(row[key]) 
+            firstkey = true;
+          }
+          if (csvValue.length > 0) {
+            csvValue = csvValue.trimEnd()
+          }
+          csvValue = csvValue + "\n";
+          response.write(csvValue);
+        })
+      stream
+        .on('end', () => {
+          console.log('CSV data streamed successfully');
+          response.end();
+        })
+      stream
+        .on('error', err => {
+          console.error('Error streaming CSV:', err);
+          response.statusCode = 500;
+          response.end('Internal Server Error');
+        });
+        
+    } catch (e) {
+      response.status('catching error', e);
+      response.end();
+    }
+    return;
   }
 
 }

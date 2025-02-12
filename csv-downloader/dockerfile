@@ -23,4 +23,4 @@ EXPOSE 3000
 ENV NODE_ENV development
 
 # Use nodemon to start the app
-CMD ["npm", "run","start"]
+CMD ["npm", "run","debug"]
